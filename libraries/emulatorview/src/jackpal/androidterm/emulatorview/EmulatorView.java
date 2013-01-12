@@ -173,6 +173,8 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
 
     private boolean mIsActive = false;
 
+    private int[] colors;
+    
     /**
      * Routing alt and meta keyCodes away from the IME allows Alt key processing to work on
      * the Asus Transformer TF101.
@@ -1110,10 +1112,20 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
     private void updateText() {
         ColorScheme scheme = mColorScheme;
         if (mTextSize > 0) {
-            mTextRenderer = new PaintRenderer(mTextSize, scheme);
-        }
-        else {
-            mTextRenderer = new Bitmap4x8FontRenderer(getResources(), scheme);
+            if(this.colors != null && this.colors.length == 259){
+            	scheme = new ColorScheme(this.colors[256], this.colors[257]);
+            	this.mTextRenderer = new StyledPaintRenderer(this.mTextSize, scheme, this.colors);
+            } else {
+            	mTextRenderer = new PaintRenderer(mTextSize, scheme);
+            }
+        	
+        } else {
+        	if(this.colors != null && this.colors.length == 259){
+        		scheme = new ColorScheme(this.colors[256], this.colors[257]);
+        		this.mTextRenderer = new StyledBitmap4x8FontRenderer(getResources(), scheme, this.colors);
+        	} else {
+        		mTextRenderer = new Bitmap4x8FontRenderer(getResources(), scheme);
+        	}
         }
 
         mForegroundPaint.setColor(scheme.getForeColor());
@@ -1320,4 +1332,19 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
     public void setFnKeyCode(int keyCode) {
         mFnKeyCode = keyCode;
     }
+    
+    public float getCharacterWidth() {
+    	return this.mCharacterWidth;
+	}
+
+	public float getCharacterHeight() {
+		return this.mCharacterHeight;
+	}
+    
+    public void setColors(int[] colors){
+    	this.colors = colors;
+    }
+    
 }
+
+
